@@ -2,6 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import connectDB from './Config/dbConnection.js';
+import userRouter from './Routes/userRoutes.js';
 
 const PORT = process.env.PORT || 4000;
 const app = express()
@@ -12,6 +13,8 @@ await connectDB()
 app.get('/', (req,res)=>{
  res.send("Backend")
 })
+
+app.use('/api/user',userRouter)
 
 app.listen(PORT , ()=> console.log("server running on ",PORT)
 )
