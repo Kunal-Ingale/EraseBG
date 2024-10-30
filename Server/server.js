@@ -7,8 +7,10 @@ import userRouter from './Routes/userRoutes.js';
 const PORT = process.env.PORT || 4000;
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(cors()); 
 await connectDB()
+
+
 
 app.get('/', (req,res)=>{
  res.send("Backend")
@@ -16,5 +18,4 @@ app.get('/', (req,res)=>{
 
 app.use('/api/user',userRouter)
 
-app.listen(PORT , ()=> console.log("server running on ",PORT)
-)
+app.listen(PORT , ()=> console.log("server running on ",PORT))
