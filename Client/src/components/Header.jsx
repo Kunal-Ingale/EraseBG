@@ -12,7 +12,7 @@ const Header = () => {
             {/* -------- Left Side --------- */}
             <div>
                 <h1 className='text-4xl xl:text-5xl 2xl:text-6xl font-bold text-neutral-700 leading-tight'>
-                    Remove the <br className='max-md:hidden' /> <span className='bg-gradient-to-r from-blue-700 to-blue-400 bg-clip-text text-transparent'>background</span> from <br className='max-md:hidden' /> images in seconds.
+                    Remove the <br className='max-md:hidden' /> <span className='bg-gradient-to-r from-blue-800 to-blue-500 bg-clip-text text-transparent'>background</span> from <br className='max-md:hidden' /> images in seconds.
                 </h1>
                 <p className='my-6 text-[16px] text-gray-500'>Instantly transform your photos with seamless background removal. Get a professional look in just a few clicks!</p>
                 <div>
