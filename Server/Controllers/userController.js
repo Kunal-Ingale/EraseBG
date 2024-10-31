@@ -1,6 +1,7 @@
 import { Webhook } from "svix";
 import User from "../Models/User.js";
 
+
 const clerkWebhooks = async (req, res) => {
     console.log("Webhook received:", req.body);
 
@@ -47,6 +48,7 @@ const clerkWebhooks = async (req, res) => {
             }
 
             case "user.deleted": {
+                console.log("Received Clerk ID for deletion:", data.id);
                 const deletedUser = await User.findOneAndDelete({ clerkId: data.id });
                 console.log("User deleted:", deletedUser);
                 res.json({ success: true, message: "User deleted", user: deletedUser });
@@ -64,4 +66,20 @@ const clerkWebhooks = async (req, res) => {
     }
 };
 
-export { clerkWebhooks };
+
+
+const userCredits = async(req,res)=>{
+   try {
+    const {clerkId} = req.body;
+    const userData = await User.findOne({clerkId});
+    
+    res.json({success:true, credits:userData.creditBalance})
+   } catch (error) {
+    console.error("Error processing webhook:", error.message);
+   res.status(500).json({ success: false, message: error.message });
+   }  
+}
+
+
+
+export { clerkWebhooks,userCredits };

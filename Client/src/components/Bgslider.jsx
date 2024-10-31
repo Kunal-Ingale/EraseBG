@@ -7,8 +7,8 @@ const Bgslider = () => {
          setSlider(e.target.value)
     }
   return (
-    <div>
-       <h1 className='text-center mb-12 sm:mb-20 text-2xl md:text-3xl lg:text-4xl font-semibold bg-gradient-to-r from-gray-900 to-gray-400 bg-clip-text text-transparent'>Remove Background With High <br /> Quality and Accuracy</h1>
+    <div className='mb-12'>
+       <h1 className='text-center mb-8 sm:mb-12 text-2xl md:text-3xl lg:text-4xl font-semibold bg-gradient-to-r from-gray-900 to-gray-400 bg-clip-text text-transparent'>Remove Background With High <br /> Quality and Accuracy</h1>
 
        <div className='relative w-full max-w-3xl overflow-hidden m-auto rounded-xl'>
         {/* BG image */}
