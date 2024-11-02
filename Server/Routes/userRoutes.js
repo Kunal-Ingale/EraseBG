@@ -1,5 +1,5 @@
 import express from "express";
-import { userCredits, paymentRazorpay, verifyRazorpay, clerkWebhooks, paymentStripe, verifyStripe } from '../Controllers/userController.js'
+import { userCredits, clerkWebhooks, paymentStripe, verifyStripe } from '../Controllers/userController.js'
 import authUser from "../Middlewares/auth.js";
 
 const userRouter = express.Router();
