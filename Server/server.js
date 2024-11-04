@@ -9,7 +9,12 @@ const PORT = process.env.PORT || 4000;
 const app = express()
 app.use(express.json())
 
-app.use(cors()); 
+const allowedOrigins = ['https://erase-bg-xyz.vercel.app']; // Add your frontend URL here
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add any other methods you use
+  credentials: true // If you need to allow credentials (like cookies)
+}));
 await connectDB()
 
 app.get('/', (req,res)=>{
