@@ -1,9 +1,12 @@
 import { Webhook } from "svix";
 import User from "../Models/User.js";
 import stripe from "stripe";
-import Transactions from '../Models/Transactions.js'
+import Transaction from '../Models/Transactions.js'
+
+//  console.log(process.env.STRIPE_SECRET_KEY);
 
 const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
+
 
 const clerkWebhooks = async (req, res) => {
   
@@ -70,65 +73,94 @@ const clerkWebhooks = async (req, res) => {
 };
 
 
-
-const userCredits = async(req,res)=>{
-   try {
-    const {clerkId} = req.body;
-    const userData = await User.findOne({clerkId});
-    
-    res.json({success:true, credits:userData.creditBalance})
-   } catch (error) {
-    console.error("Error processing webhook:", error.message);
-   res.status(500).json({ success: false, message: error.message });
-   }  
-}
-
-const paymentStripe = async (req, res)=>{
+const userCredits = async (req, res) => {
     try {
-        const {clerkId , planId} = req.body;
-        const {origin} = req.headers;
+        const {clerkId} = req.body;
+        // console.log(clerkId);
+        
+
+        if (!clerkId) {
+            return res.status(401).json({ 
+                success: false, 
+                message: "Authentication required" 
+            });
+        }
+
+        const userData = await User.findOne({ clerkId });
+        if (!userData) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "User not found" 
+            });
+        }
+
+        res.json({ 
+            success: true, 
+            credits: userData.creditBalance 
+        });
+    } catch (error) {
+        console.error("Error fetching user credits:", error.message);
+        res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
+    }
+};
+
+ // Initialize Stripe
+
+ const paymentStripe = async (req, res) => {
+    try {
+
+        const { clerkId, planId } = req.body
+        const { origin } = req.headers
 
         const userData = await User.findOne({ clerkId })
+
+        // checking for planId and userdata
         if (!userData || !planId) {
             return res.json({ success: false, message: 'Invalid Credentials' })
         }
 
         let credits, plan, amount, date;
-        switch(planId){
-            case 'Basic':{
-                plan = 'Basic'
-                credits = 100
-                amount = 10
+        switch (planId) {
+            case 'Basic':
+                plan = 'Basic';
+                credits = 10;
+                amount = 99;
                 break;
-            }
             case 'Advanced':
-                plan = 'Advanced'
-                credits = 500
-                amount = 50
+                plan = 'Advanced';
+                credits = 30;
+                amount = 249;
                 break;
-
             case 'Business':
-                plan = 'Basic'
-                credits = 5000
-                amount = 250
+                plan = 'Business';
+                credits = 50;
+                amount = 399;
                 break;
-
             default:
-                return res.json({ success: false, message: 'plan not found' })
+                return res.json({ success: false, message: 'Plan not found' });
         }
+
 
         date = Date.now()
 
+        // Creating Transaction Data
         const transactionData = {
             clerkId,
             plan,
             amount,
             credits,
             date
-        } 
-        const newTransaction = await Transactions.create(transactionData)
+        }
+
+        // Saving Transaction Data to Database
+        const newTransaction = await Transaction.create(transactionData)
+
         const currency = process.env.CURRENCY.toLocaleLowerCase()
 
+        // Creating line items to for Stripe
         const line_items = [{
             price_data: {
                 currency,
@@ -139,29 +171,31 @@ const paymentStripe = async (req, res)=>{
             },
             quantity: 1
         }]
-         
+
         const session = await stripeInstance.checkout.sessions.create({
             success_url: `${origin}/verify?success=true&transactionId=${newTransaction._id}`,
             cancel_url: `${origin}/verify?success=false&transactionId=${newTransaction._id}`,
             line_items: line_items,
             mode: 'payment',
         })
-
+        
         res.json({ success: true, session_url: session.url });
+
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
     }
 }
 
+// API Controller function to verify stripe payment
 const verifyStripe = async (req, res) => {
     try {
+        const { transactionId, success } = req.body;
 
-        const { transactionId, success } = req.body
-
-        // Checking for payment status
         if (success === 'true') {
-            const transactionData = await Transactions.findById(transactionId)
+            const transactionData = await Transaction.findById(transactionId)
+            
+            
             if (transactionData.payment) {
                 return res.json({ success: false, message: 'Payment Already Verified' })
             }
@@ -170,9 +204,11 @@ const verifyStripe = async (req, res) => {
             const userData = await User.findOne({ clerkId: transactionData.clerkId })
             const creditBalance = userData.creditBalance + transactionData.credits
             await User.findByIdAndUpdate(userData._id, { creditBalance })
+            // console.log(creditBalance);
+            
 
             // Marking the payment true 
-            await Transactions.findByIdAndUpdate(transactionData._id, { payment: true })
+            await Transaction.findByIdAndUpdate(transactionData._id, { payment: true })
 
             res.json({ success: true, message: "Credits Added" });
         }

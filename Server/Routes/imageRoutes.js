@@ -8,3 +8,5 @@ const imageRouter = express.Router();
 imageRouter.post('/remove-bg' , upload.single('image'),authUser, removeBgImage)
 
 export default imageRouter
+
+//the checkout session's total amount must convert to at least 50 cents Rs.10 converts to approx $0.12

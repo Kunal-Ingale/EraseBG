@@ -6,6 +6,7 @@ import BuyCreadit from'./pages/BuyCreadit'
 import Navbar from './components/Navbar'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import VerifyStripe from './pages/VerifyStripe'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path='/' element={<Home/>}/>
         <Route path='/result' element={<Result/>}/>
         <Route path='/buy' element={<BuyCreadit/>}/>
+        <Route path='/verify' element={<VerifyStripe/>}/>
       </Routes>
       
     </div>

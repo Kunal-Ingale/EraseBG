@@ -18,23 +18,17 @@ export const AppContextProvider = (props)=>{
     const {openSignIn} = useClerk()
     
     const loadCreditsData = async () => {
-      try {
-          const token = await getToken();
-          const { data } = await axios.get(backendURL + '/api/user/credits', { headers: { token } });
-          
-          // Log the full response
-          console.log("Data received from API:", data);
-  
-          if (data.success) {
-              setCredits(data.credits);
-          } else {
-              console.log("No success in response:", data.message);
-          }
-      } catch (error) {
-          console.log("Error fetching credits:", error);
-          toast.error(error.message);
-      }
-  };
+        try {
+            const token = await getToken()
+            const { data } = await axios.get(backendURL + '/api/user/credits', { headers: { token } })
+            if (data.success) {
+                setCredits(data.credits)
+            }
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
 
   const removeBg = async (image) => {
     try {
