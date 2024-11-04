@@ -13,6 +13,7 @@ const allowedOrigins = ['https://erase-bg-xyz.vercel.app']; // Add your frontend
 app.use(cors({
   origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add any other methods you use
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // If you need to allow credentials (like cookies)
 }));
 await connectDB()
