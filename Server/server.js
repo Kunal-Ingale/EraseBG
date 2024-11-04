@@ -7,7 +7,7 @@ import imageRouter from './Routes/imageRoutes.js'
 
 const PORT = process.env.PORT || 4000;
 const app = express()
-app.use(express.json())
+app.use(express.json({ limit: '10mb' }));
 
 const allowedOrigins = ['https://erase-bg-xyz.vercel.app']; // Add your frontend URL here
 app.use(cors({
